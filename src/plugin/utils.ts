@@ -3,6 +3,8 @@ import * as path from "path"
 import type { GraphJson, WorkspacePermission } from "./types"
 
 const MEMORY_DIR = ".opencode/plugins/multirepo"
+const PROJECT_MD_FILE = "project.md"
+const LEGACY_WORKSPACES_MD_FILE = "workspaces.md"
 
 export function readGraph(projectRoot: string): GraphJson | null {
   const graphPath = path.join(projectRoot, MEMORY_DIR, "graph.json")
@@ -16,16 +18,30 @@ export function writeGraph(projectRoot: string, graph: GraphJson): void {
   fs.writeFileSync(path.join(dir, "graph.json"), JSON.stringify(graph, null, 2))
 }
 
+export function readProjectMd(projectRoot: string): string | null {
+  const projectMdPath = path.join(projectRoot, MEMORY_DIR, PROJECT_MD_FILE)
+  if (fs.existsSync(projectMdPath)) {
+    return fs.readFileSync(projectMdPath, "utf-8")
+  }
+
+  const legacyPath = path.join(projectRoot, MEMORY_DIR, LEGACY_WORKSPACES_MD_FILE)
+  if (!fs.existsSync(legacyPath)) return null
+  return fs.readFileSync(legacyPath, "utf-8")
+}
+
+export function writeProjectMd(projectRoot: string, content: string): void {
+  const dir = path.join(projectRoot, MEMORY_DIR)
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(path.join(dir, PROJECT_MD_FILE), content)
+  fs.writeFileSync(path.join(dir, LEGACY_WORKSPACES_MD_FILE), content)
+}
+
 export function readWorkspacesMd(projectRoot: string): string | null {
-  const mdPath = path.join(projectRoot, MEMORY_DIR, "workspaces.md")
-  if (!fs.existsSync(mdPath)) return null
-  return fs.readFileSync(mdPath, "utf-8")
+  return readProjectMd(projectRoot)
 }
 
 export function writeWorkspacesMd(projectRoot: string, content: string): void {
-  const dir = path.join(projectRoot, MEMORY_DIR)
-  fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(path.join(dir, "workspaces.md"), content)
+  writeProjectMd(projectRoot, content)
 }
 
 export function getRelatedWorkspaces(graph: GraphJson, activeIds: string[]): string[] {

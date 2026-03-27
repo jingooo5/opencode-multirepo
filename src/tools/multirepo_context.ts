@@ -1,7 +1,7 @@
 import { tool } from "@opencode-ai/plugin"
 import {
   readGraph,
-  readWorkspacesMd,
+  readProjectMd,
   getRelatedWorkspaces,
   extractContext,
   assignPermissions,
@@ -11,7 +11,7 @@ import {
 export default tool({
   description:
     "Extract multirepo context. Takes active workspace IDs, traverses the dependency graph, " +
-    "and returns only related sections from workspaces.md along with permission information.",
+    "and returns only related sections from project.md along with permission information.",
   args: {
     active_workspace_ids: tool.schema
       .string()
@@ -23,9 +23,9 @@ export default tool({
       return "ERROR: graph.json not found. Initialize the project first with the @architecture agent."
     }
 
-    const workspacesMd = readWorkspacesMd(context.directory)
-    if (!workspacesMd) {
-      return "ERROR: workspaces.md not found. Initialize the project first with the @architecture agent."
+    const projectMd = readProjectMd(context.directory)
+    if (!projectMd) {
+      return "ERROR: project.md not found. Initialize the project first with the @architecture agent."
     }
 
     let activeIds = args.active_workspace_ids.split(",").map((s) => s.trim())
@@ -44,7 +44,7 @@ export default tool({
 
     const permissions = assignPermissions(graph, activeIds, allRelated)
 
-    const contextMd = extractContext(workspacesMd, allRelated)
+    const contextMd = extractContext(projectMd, allRelated)
 
     const permissionSummary = permissions
       .map((p) => `- ${p.id}: ${p.access === "readwrite" ? "read/write" : "read-only"}`)
