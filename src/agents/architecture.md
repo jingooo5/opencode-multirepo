@@ -1,7 +1,7 @@
 ---
 description: Agent that designs the overall architecture of a multirepo project and initializes workspaces
 mode: subagent
-model: anthropic/claude-opus-4-6
+model: openai/gpt-5.4
 tools:
   write: true
   edit: true
