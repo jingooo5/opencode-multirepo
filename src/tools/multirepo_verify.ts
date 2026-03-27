@@ -14,10 +14,15 @@ export default tool({
     const graph = readGraph(context.directory)
     if (!graph) return "ERROR: graph.json not found"
 
-    const writableIds = new Set(args.writable_workspace_ids.split(",").map((s) => s.trim()))
+    const writableWorkspaceIds = args.writable_workspace_ids
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+    const writableIds = new Set(writableWorkspaceIds)
 
     const violations: string[] = []
-    const allChanges: string[] = []
+    const allowedChanges: string[] = []
+    const detectedChanges: string[] = []
 
     for (const [wsId, ws] of Object.entries(graph.workspaces)) {
       const wsPath = `${graph.project.root}/${ws.path}`
@@ -34,11 +39,13 @@ export default tool({
         for (const file of changedFiles) {
           const fullPath = `${wsPath}/${file}`
           const fileWsId = resolveWorkspace(graph, fullPath) || wsId
+          const changeRef = `${fileWsId}/${file}`
+          detectedChanges.push(changeRef)
 
           if (!writableIds.has(fileWsId)) {
             violations.push(`Violation: ${file} (workspace: ${fileWsId}, permission: read-only)`)
           } else {
-            allChanges.push(`${fileWsId}/${file}`)
+            allowedChanges.push(changeRef)
           }
         }
       } catch (error) {
@@ -49,14 +56,36 @@ export default tool({
     }
 
     if (violations.length === 0) {
+      context.metadata({
+        title: "Verification passed",
+        metadata: {
+          verificationPassed: true,
+          writableWorkspaceIds,
+          changedFiles: detectedChanges,
+          changedFileCount: detectedChanges.length,
+          violationCount: 0,
+        },
+      })
+
       return [
         "## Verification passed",
         "",
-        `${allChanges.length} changed file(s), no permission violations.`,
+        `${allowedChanges.length} changed file(s), no permission violations.`,
         "",
         "Next step: call multirepo_checkpoint cleanup to remove checkpoint commits.",
       ].join("\n")
     }
+
+    context.metadata({
+      title: "Permission violations detected",
+      metadata: {
+        verificationPassed: false,
+        writableWorkspaceIds,
+        changedFiles: detectedChanges,
+        changedFileCount: detectedChanges.length,
+        violationCount: violations.length,
+      },
+    })
 
     return [
       "## Permission violations detected",
