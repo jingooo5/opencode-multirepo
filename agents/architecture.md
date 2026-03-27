@@ -2,7 +2,7 @@
 description: 멀티레포 프로젝트의 전체 아키텍처를 설계하고 워크스페이스를 초기화하는 에이전트
 mode: subagent
 model: anthropic/claude-opus-4-6
-permission:
+tools:
   write: true
   edit: true
   bash: true

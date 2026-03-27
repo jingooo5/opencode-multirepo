@@ -2,7 +2,7 @@
 description: 작업 완료 후 의존성 변경을 감지하고 메모리 파일을 업데이트하는 백그라운드 에이전트
 mode: subagent
 hidden: true
-permission:
+tools:
   write: true
   edit: true
   bash: true
