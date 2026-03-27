@@ -133,7 +133,7 @@ export const MultirepoPlugin: Plugin = async ({ client, directory, worktree }) =
         "1. Detect task changes by checking git diff/untracked files per workspace.",
         "2. If change scope is unclear, traverse the entire project root to refresh workspace-level context.",
         "3. Detect git worktree usage with `git worktree list --porcelain` and sync worktree paths.",
-        "4. Update `.opencode/plugins/multirepo/graph.json` and `.opencode/plugins/multirepo/project.md`.",
+        "4. Update `.opencode/plugins/multirepo/graph.json` and `.opencode/plugins/multirepo/workspaces.md`.",
         "5. Always mirror the same markdown into `.opencode/plugins/multirepo/workspaces.md` for backward compatibility.",
         "",
         "Verification output:",
