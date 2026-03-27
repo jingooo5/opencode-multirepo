@@ -13,6 +13,8 @@ npm run install:plugin
 
 OpenCode를 재시작한다.
 
+자세한 설치/검증 절차는 [`docs/installation.md`](docs/installation.md) 를 참고한다.
+
 ## 사용법
 
 ### 1. 프로젝트 초기화
