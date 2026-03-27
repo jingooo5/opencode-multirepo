@@ -2,7 +2,11 @@
   "name": "opencode-multirepo-plugin",
   "version": "0.1.0",
   "description": "Multi-repo context management plugin for OpenCode",
-  "main": "plugin/multirepo.ts",
+  "main": "src/plugin/multirepo.ts",
+  "scripts": {
+    "install:plugin": "node src/cli/install.mjs",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@opencode-ai/plugin": "latest"
   },

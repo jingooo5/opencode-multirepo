@@ -7,8 +7,8 @@
 ```bash
 git clone <this-repo>
 cd opencode-multirepo-plugin
-chmod +x install.sh
-./install.sh
+npm install
+npm run install:plugin
 ```
 
 OpenCode를 재시작한다.
