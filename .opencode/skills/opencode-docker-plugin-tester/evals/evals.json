@@ -1,0 +1,23 @@
+{
+  "skill_name": "opencode-docker-plugin-tester",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a Docker-based smoke test for my local OpenCode plugin. Use an ubuntu:latest Dockerfile, verify Docker first, install OpenCode in the image, copy my local repo under test into the container, inject Codex auth with an environment variable instead of baking secrets into the image, install my plugin from a local path, and run a short opencode prompt. Save the Dockerfile and all logs under .opencode-test-logs/local-copy-env-auth.",
+      "expected_output": "The response should follow the required order: Docker check, Dockerfile generation, image build, runtime auth setup, local target copy, plugin installation into a documented local OpenCode plugin path, and an opencode smoke run with durable logs and metadata.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Build a reusable OpenCode tester image from ubuntu:latest, but this time clone the target repository from GitHub instead of copying a local repo. Use a local plugin path, configure Codex auth from a mounted host auth file, skip the smoke prompt for now, and save the generated Dockerfile plus build/runtime logs under ./artifacts/git-clone-mounted-auth.",
+      "expected_output": "The response should generate a Dockerfile, build the image, mount a host auth file only at runtime, clone the target repository inside the fresh container, install the local plugin into a documented OpenCode plugin location, skip prompt execution cleanly, and report artifact paths.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Set up the Docker image and container for OpenCode plugin testing, but I do not have an API key handy and may need to sign in manually. Verify Docker, write the ubuntu:latest Dockerfile, build the image, explain the safest Codex login fallback for a headless container, prepare the target code and plugin installation, and stop before running opencode. Save instructions and artifacts under .opencode-test-logs/manual-auth-setup.",
+      "expected_output": "The response should still generate the Dockerfile and build artifacts, avoid baking secrets into the image, prefer a safe auth decision tree, explain that manual/browser-style login is an advanced fallback, prepare the target code and plugin install steps, and stop before prompt execution.",
+      "files": []
+    }
+  ]
+}
