@@ -1,5 +1,6 @@
 ---
 description: Command that activates multirepo context and specifies the working scope
+agent: architecture
 ---
 
 Analyze the user's instruction and execute work based on multirepo context.

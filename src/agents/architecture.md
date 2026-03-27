@@ -1,6 +1,6 @@
 ---
 description: Agent that designs the overall architecture of a multirepo project and initializes workspaces
-mode: subagent
+mode: all
 model: openai/gpt-5.4
 tools:
   write: true
