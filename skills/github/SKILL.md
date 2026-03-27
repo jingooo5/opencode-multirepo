@@ -1,20 +1,20 @@
 ---
 name: multirepo-github
-description: GitHub MCP를 사용하여 원격 레포 생성, 코드 조회를 수행하는 skill. @architecture의 GitHub 연동, /multirepo의 외부 코드 읽기에서 사용한다.
+description: A skill for creating remote repositories and reading code via GitHub MCP. Used by @architecture for GitHub integration and by /multirepo for reading external code.
 ---
 
 # Multirepo GitHub Skill
 
-## MCP 서버
+## MCP server
 
-GitHub MCP 서버를 사용한다: https://github.com/github/github-mcp-server
+Use the GitHub MCP server: https://github.com/github/github-mcp-server
 
-## 원격 레포 생성
+## Create remote repository
 
-@architecture 에이전트가 워크스페이스 초기화 후 사용자 승인 시 실행:
+Executed by the @architecture agent after workspace initialization, with user approval:
 
-1. GitHub MCP의 `create_repository` 도구로 레포 생성
-2. 로컬에서:
+1. Create the repository using GitHub MCP's `create_repository` tool.
+2. In the local repository:
 ```bash
 cd <workspace-path>
 git remote add origin <repository-url>
@@ -22,23 +22,23 @@ git branch -M main
 git push -u origin main
 ```
 
-## 원격 레포 조회
+## Inspect remote repository
 
 ```bash
 git remote -v
 ```
 
-## 웹 코드 읽기 (clone 없이)
+## Read web code (without clone)
 
-/multirepo 명령어에서 GitHub URL이 입력되었을 때:
+When a GitHub URL is provided in the `/multirepo` command:
 
-1. URL에서 owner, repo, path를 파싱한다.
-2. GitHub MCP의 `get_file_contents` 도구로 파일/디렉토리 내용을 조회한다.
-3. 필요한 파일만 선택적으로 읽어 읽기 전용 컨텍스트로 반환한다.
-4. clone하지 않는다.
+1. Parse `owner`, `repo`, and `path` from the URL.
+2. Retrieve file/directory content using GitHub MCP's `get_file_contents` tool.
+3. Selectively read only required files and return them as read-only context.
+4. Do not clone the repository.
 
-## 규칙
+## Rules
 
-- 원격 레포 생성은 반드시 사용자 승인 후에만 실행한다.
-- 웹 코드 읽기는 읽기 전용이며 로컬에 파일을 생성하지 않는다.
-- GitHub API rate limit에 주의하여 필요한 파일만 최소한으로 조회한다.
+- Remote repository creation must only run after explicit user approval.
+- Web code reading is read-only and must not create local files.
+- Minimize GitHub API usage to what is necessary, considering rate limits.

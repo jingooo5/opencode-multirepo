@@ -3,16 +3,16 @@ import { readGraph, resolveWorkspace } from "../plugin/utils"
 
 export default tool({
   description:
-    "작업 완료 후 변경된 파일이 접근 권한을 지켰는지 검증한다. " +
-    "위반이 있으면 위반 내역을 반환하고, 없으면 통과를 반환한다.",
+    "After work completes, verify whether changed files respected access permissions. " +
+    "If violations exist, return violation details; otherwise return a pass result.",
   args: {
     writable_workspace_ids: tool.schema
       .string()
-      .describe("쉼표로 구분된 쓰기 권한 워크스페이스 ID 목록"),
+      .describe("Comma-separated list of workspace IDs with write permission"),
   },
   async execute(args, context) {
     const graph = readGraph(context.directory)
-    if (!graph) return "ERROR: graph.json 없음"
+    if (!graph) return "ERROR: graph.json not found"
 
     const writableIds = new Set(args.writable_workspace_ids.split(",").map((s) => s.trim()))
 
@@ -36,7 +36,7 @@ export default tool({
           const fileWsId = resolveWorkspace(graph, fullPath) || wsId
 
           if (!writableIds.has(fileWsId)) {
-            violations.push(`위반: ${file} (워크스페이스: ${fileWsId}, 권한: 읽기 전용)`)
+            violations.push(`Violation: ${file} (workspace: ${fileWsId}, permission: read-only)`)
           } else {
             allChanges.push(`${fileWsId}/${file}`)
           }
@@ -50,26 +50,26 @@ export default tool({
 
     if (violations.length === 0) {
       return [
-        "## 검증 통과",
+        "## Verification passed",
         "",
-        `변경된 파일 ${allChanges.length}개, 권한 위반 없음.`,
+        `${allChanges.length} changed file(s), no permission violations.`,
         "",
-        "다음 단계: multirepo_checkpoint의 cleanup을 호출하여 checkpoint를 정리하라.",
+        "Next step: call multirepo_checkpoint cleanup to remove checkpoint commits.",
       ].join("\n")
     }
 
     return [
-      "## 권한 위반 감지",
+      "## Permission violations detected",
       "",
       ...violations,
       "",
-      `총 ${violations.length}건의 위반이 발견되었다.`,
+      `${violations.length} violation(s) detected in total.`,
       "",
-      "다음 단계:",
-      "1. multirepo_checkpoint의 rollback으로 위반된 워크스페이스를 롤백하라.",
-      "2. 위반 사유를 참고하여 쓰기 권한이 있는 워크스페이스만 수정하도록 재작업하라.",
-      "3. 재작업 후 다시 multirepo_verify를 호출하라.",
-      "4. 최대 3회 반복 후에도 실패하면 사용자에게 보고하라.",
+      "Next steps:",
+      "1. Roll back violated workspaces using multirepo_checkpoint rollback.",
+      "2. Rework based on violation reasons so only writable workspaces are modified.",
+      "3. Call multirepo_verify again after rework.",
+      "4. If it still fails after up to 3 attempts, report to the user.",
     ].join("\n")
   },
 })

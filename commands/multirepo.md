@@ -1,55 +1,55 @@
 ---
-description: 멀티레포 컨텍스트를 활성화하고 작업 영역을 지정하는 명령어
+description: Command that activates multirepo context and specifies the working scope
 ---
 
-사용자의 지침을 분석하여 멀티레포 컨텍스트 기반으로 작업을 수행하라.
+Analyze the user's instruction and execute work based on multirepo context.
 
-## 절차
+## Procedure
 
-### 1단계: 입력 분석
+### Step 1: Analyze input
 
-사용자 지침: $ARGUMENTS
+User instruction: $ARGUMENTS
 
-지침을 분석하여 다음 중 하나를 판단하라:
-- **일반 지침**: 개발 계획을 수립하고 필요한 워크스페이스를 추론한다.
-- **@ 멘션**: 멘션된 파일/폴더가 속한 워크스페이스를 식별한다.
-- **GitHub URL**: 읽기 전용 외부 컨텍스트로 추가한다.
+Analyze the instruction and determine one of the following:
+- **General instruction**: Create a development plan and infer required workspaces.
+- **@ mention**: Identify the workspace containing the mentioned file/folder.
+- **GitHub URL**: Add it as read-only external context.
 
-### 2단계: 워크스페이스 결정
+### Step 2: Determine workspaces
 
-`multirepo_context` 도구를 호출하여:
-- 활성 워크스페이스 ID를 전달한다.
-- 반환된 의존성 그래프 기반 컨텍스트와 권한 정보를 확인한다.
+Call the `multirepo_context` tool to:
+- Pass active workspace IDs.
+- Review the returned dependency-graph-based context and permission info.
 
-사용자에게 다음을 출력한다:
-- 접근할 워크스페이스 목록
-- 각 워크스페이스의 권한 (읽기+쓰기 / 읽기 전용)
+Output the following to the user:
+- List of workspaces to access
+- Permission per workspace (read/write or read-only)
 
-### 3단계: checkpoint 생성
+### Step 3: Create checkpoint
 
-`multirepo_checkpoint`의 `create` 도구를 호출하여:
-- 쓰기 권한이 있는 모든 워크스페이스에 checkpoint를 생성한다.
+Call the `create` tool of `multirepo_checkpoint` to:
+- Create checkpoints for all workspaces with write permission.
 
-### 4단계: 작업 수행
+### Step 4: Execute work
 
-컨텍스트와 권한을 준수하며 사용자의 지침을 실행한다.
+Execute the user's instruction while respecting context and permissions.
 
-**반드시 준수할 규칙:**
-- 읽기 전용 워크스페이스의 파일을 수정하지 마라.
-- 컨텍스트에 포함되지 않은 워크스페이스의 파일에 접근하지 마라.
+**Mandatory rules:**
+- Do not modify files in read-only workspaces.
+- Do not access files in workspaces not included in context.
 
-### 5단계: 검증
+### Step 5: Verify
 
-작업 완료 후 `multirepo_verify` 도구를 호출하여 권한 위반 여부를 검증한다.
+After finishing work, call the `multirepo_verify` tool to validate permission compliance.
 
-- **위반 없음**: `multirepo_checkpoint`의 `cleanup` 도구로 checkpoint를 정리하고 완료한다.
-- **위반 있음**:
-  1. `multirepo_checkpoint`의 `rollback` 도구로 위반된 워크스페이스를 롤백한다.
-  2. 위반 사유를 참고하여 4단계를 다시 수행한다.
-  3. 최대 3회 반복 후에도 실패하면 사용자에게 상황을 보고하고 수동 개입을 요청한다.
+- **No violations**: Clean up checkpoints with the `cleanup` tool of `multirepo_checkpoint` and finish.
+- **Violations found**:
+  1. Roll back the violated workspace using the `rollback` tool of `multirepo_checkpoint`.
+  2. Redo Step 4 based on the violation reason.
+  3. If it still fails after up to 3 attempts, report the situation to the user and request manual intervention.
 
-### GitHub URL 처리
+### GitHub URL handling
 
-지침에 GitHub URL이 포함된 경우:
-- GitHub MCP의 `get_file_contents` 도구로 해당 레포의 파일을 읽는다.
-- clone하지 않고 필요한 파일만 선택적으로 읽어 읽기 전용 컨텍스트로 사용한다.
+When the instruction includes a GitHub URL:
+- Read files from the repository using GitHub MCP's `get_file_contents` tool.
+- Do not clone; read only required files selectively and use them as read-only context.

@@ -1,31 +1,31 @@
 ---
 name: multirepo-git
-description: 멀티레포 프로젝트의 git 초기화, worktree 감지, checkpoint 기반 롤백을 수행하는 skill. @architecture 에이전트의 워크스페이스 초기화, @indexer의 worktree 동기화, /multirepo의 롤백 메커니즘에서 사용한다.
+description: A skill for multirepo git initialization, worktree detection, and checkpoint-based rollback. Used by @architecture for workspace initialization, @indexer for worktree synchronization, and /multirepo rollback workflows.
 ---
 
 # Multirepo Git Skill
 
-## 워크스페이스 git 초기화
+## Workspace git initialization
 
-각 워크스페이스 디렉토리에서 실행:
+Run in each workspace directory:
 
 ```bash
 cd <workspace-path>
 git init
 git add -A
-git commit -m "init: <workspace-id> 워크스페이스 초기화"
+git commit -m "init: <workspace-id> workspace initialization"
 ```
 
-## worktree 감지
+## Worktree detection
 
 ```bash
 cd <workspace-path>
 git worktree list --porcelain
 ```
 
-출력 파싱: `worktree <path>` 라인에서 원본 경로가 아닌 항목을 graph.json의 `worktrees` 배열에 추가한다.
+Output parsing: From `worktree <path>` lines, add entries that are not the primary path to the `worktrees` array in `graph.json`.
 
-## checkpoint 생성 (작업 전)
+## Create checkpoint (before work)
 
 ```bash
 cd <workspace-path>
@@ -33,7 +33,7 @@ git add -A
 git commit --allow-empty -m "multirepo-checkpoint: <ISO-timestamp>" --no-verify
 ```
 
-## rollback (권한 위반 시)
+## Rollback (on permission violation)
 
 ```bash
 cd <workspace-path>
@@ -41,17 +41,17 @@ git reset --hard <checkpoint-commit-hash>
 git clean -fd
 ```
 
-## checkpoint 정리 (작업 성공 시)
+## Cleanup checkpoint (after successful work)
 
 ```bash
 cd <workspace-path>
-# 최신 커밋이 checkpoint인 경우
+# When the latest commit is a checkpoint
 git reset --soft HEAD~1
 ```
 
-## 규칙
+## Rules
 
-- checkpoint 커밋 메시지는 반드시 `multirepo-checkpoint:` 로 시작한다.
-- rollback 시 `git clean -fd`로 untracked 파일도 제거한다.
-- checkpoint 정리는 최신 커밋이 checkpoint일 때만 수행한다.
-- 새 커밋이 checkpoint 위에 쌓여 있으면 수동 정리가 필요하다고 사용자에게 알린다.
+- Checkpoint commit messages must start with `multirepo-checkpoint:`.
+- During rollback, remove untracked files as well using `git clean -fd`.
+- Cleanup checkpoints only when the latest commit is a checkpoint.
+- If new commits are stacked on top of a checkpoint, notify the user that manual cleanup is required.
