@@ -1,0 +1,30 @@
+services:
+  tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: opencode-multirepo-plugin-tester:ubuntu
+    container_name: opencode-multirepo-plugin-tester
+    user: "0:0"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    working_dir: /workspace/opencode-multirepo-plugin
+    environment:
+      HOME: /home/tester
+      PATH: /home/tester/.opencode/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      NPM_CONFIG_CACHE: /home/tester/.npm
+      REPO_SOURCE_DIR: /host-workspace/opencode-multirepo-plugin
+      REPO_WORKSPACE_DIR: /workspace/opencode-multirepo-plugin
+      OPENCODE_CONFIG_DIR: /home/tester/.config/opencode
+    command: ["sleep", "infinity"]
+    volumes:
+      - ../..:/host-workspace/opencode-multirepo-plugin:ro
+      - opencode-tester-workspace:/workspace
+      - opencode-tester-config:/home/tester/.config/opencode
+      - opencode-tester-npm-cache:/home/tester/.npm
+
+volumes:
+  opencode-tester-workspace:
+  opencode-tester-config:
+  opencode-tester-npm-cache:
