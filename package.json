@@ -5,6 +5,7 @@
   "main": "src/plugin/multirepo.ts",
   "scripts": {
     "install:plugin": "node src/cli/install.mjs",
+    "test": "node --test ./test/install-cli.test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

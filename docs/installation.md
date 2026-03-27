@@ -30,7 +30,7 @@
 1. Node.js 와 npm 이 설치되어 있어야 한다.
 2. 이 저장소가 로컬에 clone 되어 있어야 한다.
 3. 현재 작업 디렉터리가 저장소 루트여야 한다.
-4. 기본 OpenCode 설정 디렉터리는 `~/.config/opencode` 이다.
+4. 기본 설치 대상 디렉터리는 `OPENCODE_CONFIG_DIR` → `dirname(OPENCODE_CONFIG)` → `~/.config/opencode` 순서로 결정된다.
 5. 다른 경로에 설치하려면 `--config-dir` 옵션을 사용한다.
 
 ## 3. 빠른 설치
@@ -52,7 +52,7 @@ npm run install:plugin
 npm run install:plugin -- --help
 ```
 
-- `--config-dir <path>`: 설치 대상 OpenCode 설정 디렉터리 지정
+- `--config-dir <path>`: 설치 대상 OpenCode 설정 디렉터리 지정 (환경변수 기본값보다 우선)
 - `--project-dir <path>`: 원본 플러그인 저장소 경로 지정
 - `--mode <symlink|copy>`: 기본값은 `symlink`
 - `--dry-run`: 실제 파일 변경 없이 실행 계획만 출력

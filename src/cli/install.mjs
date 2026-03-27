@@ -56,7 +56,7 @@ function printUsage() {
   console.log(`Usage: npm run install:plugin -- [options]
 
 Options:
-  --config-dir <path>   OpenCode config directory (default: ~/.config/opencode)
+  --config-dir <path>   OpenCode config directory (default: OPENCODE_CONFIG_DIR > dirname(OPENCODE_CONFIG) > ~/.config/opencode)
   --project-dir <path>  Plugin project directory (default: current working directory)
   --mode <symlink|copy> Install mode (default: symlink)
   --dry-run             Print actions without applying changes
@@ -64,9 +64,29 @@ Options:
 `)
 }
 
+function resolveDefaultConfigDir() {
+  const configDirFromEnv = process.env.OPENCODE_CONFIG_DIR?.trim()
+  if (configDirFromEnv) {
+    return path.resolve(configDirFromEnv)
+  }
+
+  const configPathFromEnv = process.env.OPENCODE_CONFIG?.trim()
+  if (configPathFromEnv) {
+    const resolvedPath = path.resolve(configPathFromEnv)
+
+    if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isDirectory()) {
+      return resolvedPath
+    }
+
+    return path.dirname(resolvedPath)
+  }
+
+  return path.join(os.homedir(), ".config/opencode")
+}
+
 function parseArgs(argv) {
   const options = {
-    configDir: path.join(os.homedir(), ".config/opencode"),
+    configDir: resolveDefaultConfigDir(),
     projectDir: process.cwd(),
     mode: "symlink",
     dryRun: false,
