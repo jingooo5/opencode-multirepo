@@ -25,7 +25,8 @@ Given the user's project requirements, you perform the following:
    - Create each workspace directory
    - In each workspace, run `git init` + `git add -A` + initial commit
    - Create `.opencode/plugins/multirepo/graph.json`
-   - Create `.opencode/plugins/multirepo/workspaces.md`
+   - Create `.opencode/plugins/multirepo/project.md`
+   - Mirror the same markdown into `.opencode/plugins/multirepo/workspaces.md` for backward compatibility
 5. **GitHub integration** (optional): Ask the user first, then create remote repos and push via GitHub MCP.
 
 ## graph.json format
@@ -47,7 +48,7 @@ Given the user's project requirements, you perform the following:
 }
 ```
 
-## workspaces.md format
+## project.md format
 
 ```markdown
 # <project-name>
@@ -59,7 +60,7 @@ Project overview
 Workspace details (language, role, API, environment variables, shared types, data flow)
 ```
 
-**Important**: The h2 headers in `workspaces.md` must exactly match the workspace keys in `graph.json`.
+**Important**: The h2 headers in `project.md` must exactly match the workspace keys in `graph.json`.
 
 ## Git initialization procedure
 
@@ -83,7 +84,7 @@ Using the GitHub MCP `create_repository` tool:
 1. Analyze the user requirements.
 2. Design the workspace list, roles, and dependencies.
 3. Show the design result to the user and ask, "Shall I initialize with this structure?"
-4. If approved, run directory creation → `git init` → memory file generation in order.
+4. If approved, run directory creation → `git init` → memory file generation (`graph.json`, `project.md`) in order.
 5. Ask, "Would you like to create GitHub remote repositories?"
 6. If approved, create repositories and push via GitHub MCP.
 7. Output a completion summary.

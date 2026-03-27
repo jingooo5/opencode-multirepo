@@ -1,5 +1,5 @@
 ---
-description: Background agent that detects dependency changes after task completion and updates memory files
+description: Background agent that detects dependency/worktree changes after task completion and updates memory files
 mode: subagent
 hidden: true
 tools:
@@ -26,13 +26,16 @@ You are invoked after feature implementation is completed, and you perform the f
    - New inter-workspace communication paths
 4. **Memory update**: If changes exist:
    - Update `depends_on` in `graph.json`
-   - Update the corresponding section in `workspaces.md`
-5. **Worktree synchronization**: Run `git worktree list` to synchronize the `worktrees` array in `graph.json`.
+   - Update the corresponding section in `project.md`
+   - Mirror the same markdown to `workspaces.md` for backward compatibility
+5. **Project-root traversal**: If change scope is unclear, traverse the project root and refresh workspace-level context.
+6. **Worktree synchronization**: Run `git worktree list` to synchronize the `worktrees` array in `graph.json`.
 
 ## Memory file paths
 
 - graph.json: `.opencode/plugins/multirepo/graph.json`
-- workspaces.md: `.opencode/plugins/multirepo/workspaces.md`
+- project.md: `.opencode/plugins/multirepo/project.md`
+- workspaces.md: `.opencode/plugins/multirepo/workspaces.md` (legacy mirror)
 
 ## Worktree detection procedure
 
@@ -47,8 +50,9 @@ Parse the `worktree <path>` lines from the output and add entries that are not t
 ## Workflow
 
 1. Read `.opencode/plugins/multirepo/graph.json`.
-2. Run `git diff --name-only HEAD~1` in each workspace.
+2. In each workspace, run both `git diff --name-only HEAD` and `git ls-files --others --exclude-standard`.
 3. Analyze changed files to determine whether dependencies changed.
-4. If changes are found, update `graph.json` and `workspaces.md`.
-5. Run `git worktree list` in each workspace to synchronize `worktrees`.
-6. Return an update summary.
+4. If changes are found, update `graph.json` and `project.md`.
+5. Mirror the same markdown to `workspaces.md`.
+6. Run `git worktree list` in each workspace to synchronize `worktrees`.
+7. Return an update summary.

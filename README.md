@@ -52,4 +52,6 @@ OpenCode를 재시작한다.
 프로젝트 루트의 `.opencode/plugins/multirepo/` 에 저장:
 
 - `graph.json`: 워크스페이스 의존성 그래프
-- `workspaces.md`: 워크스페이스 상세 컨텍스트
+- `project.md`: 워크스페이스 상세 컨텍스트
+
+호환성을 위해 `workspaces.md` 도 동일한 내용으로 함께 갱신된다.
