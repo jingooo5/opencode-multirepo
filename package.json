@@ -1,0 +1,36 @@
+{
+  "name": "opencode-multirepo",
+  "version": "0.1.0",
+  "description": "Multi-workspace context plugin for OpenCode coding agent.",
+  "type": "module",
+  "module": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "rm -rf dist && tsc --emitDeclarationOnly && bun build src/index.ts --outdir dist --target bun --external @opencode-ai/* --external zod",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "^1.14.0",
+    "@opencode-ai/sdk": "^1.4.0",
+    "zod": "^3.23.0"
+  },
+  "dependencies": {
+    "web-tree-sitter": "^0.25.0",
+    "graphology": "^0.25.4",
+    "graphology-pagerank": "^1.1.0",
+    "ignore": "^5.3.1"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.14.0",
+    "@opencode-ai/sdk": "^1.4.0",
+    "@tsconfig/node22": "^22.0.0",
+    "@types/bun": "latest",
+    "typescript": "^5.5.0",
+    "zod": "^3.23.0"
+  }
+}
